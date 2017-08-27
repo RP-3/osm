@@ -5,9 +5,8 @@ exports.up = function(knex, Promise) {
 
         t.bigInteger('id')
             .primary()
-            .index();
-        t.integer('version')
-            .index();
+            // .index();
+        t.integer('version');
         t.specificType('lat', 'numeric(10,8)');
         t.specificType('lon', 'numeric(11,8)');
         t.string('postcode', 5);
@@ -38,12 +37,12 @@ exports.up = function(knex, Promise) {
         return knex.schema.createTable('ways', function(t){
 
             t.bigInteger('id')
-                .index();
+                // .index();
             t.integer('version')
             t.string('name'); // tags.name
             t.integer('highway_type_id') //tags.highway
-                .references('id')
-                .inTable('highway_types');
+                // .references('id')
+                // .inTable('highway_types');
             t.integer('max_speed'); //tags.maxspeed
         });
     })

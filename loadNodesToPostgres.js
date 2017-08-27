@@ -1,6 +1,16 @@
+/*
+When done must run
+
+UPDATE nodes
+SET postcode = (
+    SELECT MAX(poa_code) as poa FROM poa_2011_aust
+    WHERE ST_Contains(poa_2011_aust.geom, ST_SetSRID(ST_MakePoint(nodes.lon, nodes.lat), 0))
+);
+*/
+
 const ProgressBar = require('progress');
 const Promise = require('bluebird');
-const bar = new ProgressBar('[:bar]:percent :eta s', { total: 4598174/50, width: 100, renderThrottle: 200 });
+const bar = new ProgressBar('[:bar]:percent :eta s', { total: 11163754/100, width: 100, renderThrottle: 200 });
 
 const knex = require('knex')({
     client: 'pg',
@@ -10,15 +20,6 @@ const knex = require('knex')({
     }
 });
 
-const boundryDb = require('knex')({
-    client: 'pg',
-    connection: {
-        host : '127.0.0.1',
-        database : 'boundries'
-    }
-});
-
-const countDelimiter = 1000;
 let count = 0;
 
 const nodeFilePath = '/Users/sarith21/Desktop/osm/nodes.json';
@@ -32,11 +33,11 @@ let qs = [];
 
 lr.on('line', function (line) {
     
-    if(qs.length > 50){
+    if(qs.length >= 100){
 
         lr.pause();
 
-        return Promise.map(qs, addPostcodeToNodeline)
+        return Promise.map(qs, formatInsertions)
         .then((insertions) => knex('nodes').insert(insertions))
         .then(() => {
 
@@ -57,34 +58,15 @@ lr.on('line', function (line) {
     }
 });
 
-const addPostcodeToNodeline = (nodeLine) => {
+const formatInsertions = (nodeLine) => {
 
     const node = JSON.parse(nodeLine);
-    return classifyCoordinates(node.lat, node.lon)
-    .then((postcode) => ({
+
+    return {
         lat: node.lat,
         lon: node.lon,
         id: node.id,
         version: node.version,
-        postcode
-    }));
-};
-
-const highwayTypes = {
-    motorway: 1,
-    primary: 2,
-    secondary: 3,
-    tertiary: 4,
-    residential: 5,
-};
-
-const genQ = (long, lat) => `ST_Contains(poa_2011_aust.geom, ST_SetSRID(ST_MakePoint(${long},${lat}),0))`;
-
-const classifyCoordinates = (lat, lon) => {
-
-    return boundryDb
-    .select('poa_code')
-    .from('poa_2011_aust')
-    .whereRaw(genQ(lon, lat))
-    .then((datum) => datum.length ? datum[0].poa_code : null);
+        postcode: null
+    };
 };

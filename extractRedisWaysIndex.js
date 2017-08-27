@@ -1,7 +1,7 @@
 const fs = require('fs');
 const Promise = require('bluebird');
 const ProgressBar = require('progress');
-const bar = new ProgressBar('[:bar] :percent :eta s', { total: 615285, width: 100, renderThrottle: 200 });
+const bar = new ProgressBar('[:bar] :percent :eta s', { total: 939200, width: 100, renderThrottle: 200 });
 
 const pg = require('pg');
 const QueryStream = require('pg-query-stream');

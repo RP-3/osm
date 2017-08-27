@@ -1,9 +1,8 @@
 const fs = require('fs');
 const Osm2Json = require('osm2json');
 const dotDelimiter = 10000;
-const wrtiteType = 'node';
 
-const inputDataFile = '/Users/sarith21/Desktop/osm/vehicle-highways.osm.xml';
+const inputDataFile = '/Users/sarith21/Desktop/osm/vehicle-highways3.osm.xml';
 const nodeFile = '/Users/sarith21/Desktop/osm/nodes.json';
 const wayFile = '/Users/sarith21/Desktop/osm/ways.json';
 
@@ -19,7 +18,6 @@ const dataHandlers = {
 };
 
 dataStream.on('data', (obj) => {
-
     const type = obj.type;
     if(dataHandlers[type]) dataHandlers[type](obj);
 });
@@ -29,6 +27,10 @@ dataStream.on('end', (obj) => {
     setTimeout(() => nodeOutput.close(), 1000);
     setTimeout(() => wayOutput.close(), 1000);
     setTimeout(() => process.exit(0), 1200);
+});
+
+dataStream.on('error', (err) => {
+    console.log(err);
 });
 
 // { bounds: 1, node: 4598174, way: 615285, relation: 38924 }

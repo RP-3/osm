@@ -9,15 +9,16 @@ WHERE EXISTS (
    WHERE  q1.ctid < q.ctid
    AND    q.node_id = q1.node_id
    AND    q.way_id = q1.way_id
-    );
+);
 
 2. 
 CREATE INDEX nodes_to_ways_node_id ON nodes_to_ways (node_id);
+CREATE INDEX nodes_to_ways_way_id ON nodes_to_ways (way_id); 
 */
 
 const ProgressBar = require('progress');
 const Promise = require('bluebird');
-const bar = new ProgressBar('[:bar]:percent :eta s', { total: 615285/50, width: 100, renderThrottle: 200 });
+const bar = new ProgressBar('[:bar]:percent :eta s', { total: 958027/50, width: 100, renderThrottle: 200 });
 
 const knex = require('knex')({
     client: 'pg',
@@ -27,7 +28,6 @@ const knex = require('knex')({
     }
 });
 
-const countDelimiter = 1000;
 let count = 0;
 
 const wayFilePath = '/Users/sarith21/Desktop/osm/ways.json';
@@ -41,7 +41,7 @@ let qs = [];
 
 lr.on('line', function (line) {
     
-    if(qs.length > 50){
+    if(qs.length >= 50){
 
         lr.pause();
 

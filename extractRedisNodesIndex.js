@@ -1,7 +1,7 @@
 const fs = require('fs');
 const Promise = require('bluebird');
 const ProgressBar = require('progress');
-const bar = new ProgressBar('[:bar] :percent :eta s', { total: 4598174, width: 100, renderThrottle: 200 });
+const bar = new ProgressBar('[:bar] :percent :eta s', { total: 10848487, width: 100, renderThrottle: 200 });
 
 const pg = require('pg');
 const QueryStream = require('pg-query-stream');
@@ -15,6 +15,7 @@ const pgClient = new Client({
 
 const qs = `
 SELECT
+    nodes.id as id,
     max(nodes.lat) as lat,
     max(nodes.lon) as lon,
     max(nodes.postcode) as postcode,
